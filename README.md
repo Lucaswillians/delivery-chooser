@@ -16,5 +16,5 @@ from Extractor import Extractor
 Extractor.get_connections()
 
 # get converted content from input/deliveries.csv
-Extractor.get_deliveries()()
+Extractor.get_deliveries()
 ```
