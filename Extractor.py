@@ -1,46 +1,53 @@
 import csv
+import logging
 
+from DeliveryOptimizerAI import DeliveryOptimizer
+
+logging.basicConfig(
+    level=logging.INFO, 
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("delivery_optimizer.log"),
+        logging.StreamHandler()
+    ]
+)
 
 class Extractor:
-    CONNECTION_PATH = 'input/connections.csv'
-    DELIVERIES_PATH = 'input/deliveries.csv'
+    CONNECTION_PATH = 'input\connections.csv'
+    DELIVERIES_PATH = 'input\deliveries.csv'
 
     @staticmethod
     def get_connections():
         content = []
-        first_line = False
-
         with open(Extractor.CONNECTION_PATH) as stream:
             rows = csv.reader(stream)
-
             for row in rows:
-                if first_line is False:
-                    first_line = True
-
-                    continue
-
-                content.append(row)
-
+                content.append([cell.strip() for cell in row])  # Remove extra spaces
         return content
 
     @staticmethod
     def get_deliveries():
         content = []
-        first_line = False
-
         with open(Extractor.DELIVERIES_PATH) as stream:
             rows = csv.reader(stream)
-
+            next(rows)  # Skip header
             for row in rows:
-                if first_line is False:
-                    first_line = True
-
-                    continue
-
                 content.append({
                     'start_time': int(row[0].strip()),
                     'target': row[1].strip(),
                     'bonus': int(row[2].strip()),
                 })
-
         return content
+
+def main():
+    connections = Extractor.get_connections()
+    deliveries = Extractor.get_deliveries()
+
+    optimizer = DeliveryOptimizer(connections, deliveries)
+    best_solution = optimizer.a_star_search()
+
+    logging.info("Best delivery sequence: %s", best_solution[1])
+    logging.info("Total profit: %d", best_solution[0])
+
+if __name__ == '__main__':
+    main()
