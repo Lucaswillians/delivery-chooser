@@ -1,8 +1,16 @@
 import logging
 import heapq
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("delivery_optimizer.log"),
+        logging.StreamHandler()
+    ]
+)
 
-class DeliveryOptimizer:
+class DeliveryOptimizerAI:
     def __init__(self, connections, deliveries):
         self.graph = self.build_graph(connections)
         self.deliveries = sorted(deliveries, key=lambda x: x['start_time'])
@@ -30,7 +38,7 @@ class DeliveryOptimizer:
                     if dest not in graph:
                         graph[dest] = []
                     graph[dest].append((src, time))
-        
+
         logging.info("Graph built: %s", graph)
         return graph
 
