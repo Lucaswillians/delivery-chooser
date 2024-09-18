@@ -7,18 +7,10 @@ class Extractor:
 
     @staticmethod
     def get_connections():
-        return Extractor.get_content(Extractor.CONNECTION_PATH)
-
-    @staticmethod
-    def get_deliveries():
-        return Extractor.get_content(Extractor.DELIVERIES_PATH)
-
-    @staticmethod
-    def get_content(path):
         content = []
         first_line = False
 
-        with open(path) as stream:
+        with open(Extractor.CONNECTION_PATH) as stream:
             rows = csv.reader(stream)
 
             for row in rows:
@@ -28,5 +20,27 @@ class Extractor:
                     continue
 
                 content.append(row)
+
+        return content
+
+    @staticmethod
+    def get_deliveries():
+        content = []
+        first_line = False
+
+        with open(Extractor.DELIVERIES_PATH) as stream:
+            rows = csv.reader(stream)
+
+            for row in rows:
+                if first_line is False:
+                    first_line = True
+
+                    continue
+
+                content.append({
+                    'start_time': int(row[0].strip()),
+                    'target': row[1].strip(),
+                    'bonus': int(row[2].strip()),
+                })
 
         return content

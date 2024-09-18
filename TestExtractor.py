@@ -5,10 +5,16 @@ from Extractor import Extractor
 
 class TestExtractor(unittest.TestCase):
     def testConnections(self):
-        self.assertGreater(len(Extractor.get_connections()), 0)
+        connections = Extractor.get_connections()
+
+        print(connections)
+        self.assertGreater(len(connections), 0)
 
     def testDeliveries(self):
-        self.assertGreater(len(Extractor.get_deliveries()), 0)
+        deliveries = Extractor.get_deliveries()
+
+        print(deliveries)
+        self.assertGreater(len(deliveries), 0)
 
 
 if __name__ == '__main__':
