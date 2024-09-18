@@ -1,33 +1,24 @@
 import csv
 
+
 class Extractor:
     CONNECTION_PATH = 'input/connections.csv'
     DELIVERIES_PATH = 'input/deliveries.csv'
 
     @staticmethod
     def get_connections():
-        connections = []
-        first_line = False
-
-        with open(Extractor.CONNECTION_PATH) as stream:
-            rows = csv.reader(stream)
-
-            for row in rows:
-                if first_line is False:
-                    first_line = True
-
-                    continue
-
-                connections.append(row)
-
-        return connections
+        return Extractor.get_content(Extractor.CONNECTION_PATH)
 
     @staticmethod
     def get_deliveries():
-        deliveries = []
+        return Extractor.get_content(Extractor.DELIVERIES_PATH)
+
+    @staticmethod
+    def get_content(path):
+        content = []
         first_line = False
 
-        with open(Extractor.DELIVERIES_PATH) as stream:
+        with open(path) as stream:
             rows = csv.reader(stream)
 
             for row in rows:
@@ -36,6 +27,6 @@ class Extractor:
 
                     continue
 
-                deliveries.append(row)
+                content.append(row)
 
-        return deliveries
+        return content
