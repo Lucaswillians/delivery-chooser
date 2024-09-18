@@ -18,7 +18,6 @@ class DeliveryOptimizer:
         return graph
 
     def _dijkstra(self, start):
-        # Dijkstra algorithm to find the shortest path from start to all other nodes
         distances = {node: float('infinity') for node in self.connections}
         distances[start] = 0
         priority_queue = [(0, start)]
@@ -39,12 +38,10 @@ class DeliveryOptimizer:
             target = delivery['target']
             bonus = delivery['bonus']
 
-            # Get shortest path from 'A' to the delivery target
             shortest_paths = self._dijkstra('A')
             travel_time = shortest_paths.get(target, float('infinity'))
 
             if travel_time != float('infinity'):
-                # Calculate the total time including start time
                 arrival_time = start_time + travel_time
                 if arrival_time <= start_time + bonus:
                     print(f"Delivery to {target} on time! Bonus earned: {bonus}")
