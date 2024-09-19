@@ -1,4 +1,5 @@
 import csv
+import logging
 
 from DeliveryOptimizerAI import DeliveryOptimizerAI
 
@@ -20,7 +21,6 @@ class Extractor:
         content = []
         with open(Extractor.CONNECTION_PATH) as stream:
             rows = csv.reader(stream)
-            next(rows)  # Skip header
             for row in rows:
                 content.append([cell.strip() for cell in row])  # Remove extra spaces
         return content
