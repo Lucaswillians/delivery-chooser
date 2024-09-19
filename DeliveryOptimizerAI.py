@@ -2,7 +2,7 @@ import logging
 import heapq
 
 
-class DeliveryOptimizer:
+class DeliveryOptimizerAI:
     def __init__(self, connections, deliveries):
         self.graph = self.build_graph(connections)
         self.deliveries = sorted(deliveries, key=lambda x: x['start_time'])
@@ -30,7 +30,7 @@ class DeliveryOptimizer:
                     if dest not in graph:
                         graph[dest] = []
                     graph[dest].append((src, time))
-        
+
         logging.info("Graph built: %s", graph)
         return graph
 
@@ -67,7 +67,10 @@ class DeliveryOptimizer:
                             logging.info("Pushing to queue: new_time=%d, new_bonus=%d, path=%s",
                                          new_time, new_bonus, new_path)
 
+        logging.info("Best delivery sequence: %s", best_solution[1])
+        logging.info("Total profit: %d", best_solution[0])
         logging.info("Best solution found: %s", best_solution)
+
         return best_solution
 
     def get_time_between(self, src, dest):

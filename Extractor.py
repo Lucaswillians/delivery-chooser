@@ -1,10 +1,10 @@
 import csv
 import logging
 
-from DeliveryOptimizerAI import DeliveryOptimizer
+from DeliveryOptimizerAI import DeliveryOptimizerAI
 
 logging.basicConfig(
-    level=logging.INFO, 
+    level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler("delivery_optimizer.log"),
@@ -13,8 +13,8 @@ logging.basicConfig(
 )
 
 class Extractor:
-    CONNECTION_PATH = 'input\connections.csv'
-    DELIVERIES_PATH = 'input\deliveries.csv'
+    CONNECTION_PATH = 'input/connections.csv'
+    DELIVERIES_PATH = 'input/deliveries.csv'
 
     @staticmethod
     def get_connections():
@@ -43,11 +43,8 @@ def main():
     connections = Extractor.get_connections()
     deliveries = Extractor.get_deliveries()
 
-    optimizer = DeliveryOptimizer(connections, deliveries)
+    optimizer = DeliveryOptimizerAI(connections, deliveries)
     best_solution = optimizer.a_star_search()
-
-    logging.info("Best delivery sequence: %s", best_solution[1])
-    logging.info("Total profit: %d", best_solution[0])
 
 if __name__ == '__main__':
     main()

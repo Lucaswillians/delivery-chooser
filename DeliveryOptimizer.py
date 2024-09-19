@@ -17,8 +17,12 @@ class DeliveryOptimizer:
         logging.info("Processando conexões...")
         graph = {}
         nodes = ['A', 'B', 'C', 'D']
+
+        connection_data = connection_data[1:]
+
         for i, row in enumerate(connection_data):
             graph[nodes[i]] = {}
+
             for j, time in enumerate(row):
                 if int(time) > 0:
                     graph[nodes[i]][nodes[j]] = int(time)
