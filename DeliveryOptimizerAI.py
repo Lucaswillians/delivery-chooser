@@ -75,7 +75,10 @@ class DeliveryOptimizerAI:
                             logging.info("Pushing to queue: new_time=%d, new_bonus=%d, path=%s",
                                          new_time, new_bonus, new_path)
 
+        logging.info("Best delivery sequence: %s", best_solution[1])
+        logging.info("Total profit: %d", best_solution[0])
         logging.info("Best solution found: %s", best_solution)
+
         return best_solution
 
     def get_time_between(self, src, dest):

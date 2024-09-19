@@ -1,5 +1,15 @@
 import csv
 
+from DeliveryOptimizerAI import DeliveryOptimizerAI
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("delivery_optimizer.log"),
+        logging.StreamHandler()
+    ]
+)
 
 class Extractor:
     CONNECTION_PATH = 'input/connections.csv'
@@ -28,3 +38,13 @@ class Extractor:
                     'bonus': int(row[2].strip()),
                 })
         return content
+
+def main():
+    connections = Extractor.get_connections()
+    deliveries = Extractor.get_deliveries()
+
+    optimizer = DeliveryOptimizerAI(connections, deliveries)
+    best_solution = optimizer.a_star_search()
+
+if __name__ == '__main__':
+    main()
