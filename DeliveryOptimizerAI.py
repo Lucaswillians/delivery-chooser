@@ -1,6 +1,14 @@
 import logging
 import heapq
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("delivery_optimizer.log"),
+        logging.StreamHandler()
+    ]
+)
 
 class DeliveryOptimizerAI:
     def __init__(self, connections, deliveries):

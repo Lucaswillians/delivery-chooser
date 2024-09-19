@@ -70,7 +70,3 @@ class DeliveryOptimizer:
                 logging.info(f"Nenhum caminho válido para {target}")
 
         logging.info(f"Bônus total ganho: {self.bonus_total}")
-
-if __name__ == "__main__":
-    optimizer = DeliveryOptimizer()
-    optimizer.calculate_deliveries()
