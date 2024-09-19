@@ -1,4 +1,3 @@
-import heapq
 import logging
 from Extractor import Extractor
 
@@ -29,22 +28,31 @@ class DeliveryOptimizer:
         logging.info("Conexões processadas com sucesso.")
         return graph
 
-    def _dijkstra(self, start):
-        logging.info(f"Calculando o caminho mais curto a partir de {start}...")
-        distances = {node: float('infinity') for node in self.connections}
-        distances[start] = 0
-        priority_queue = [(0, start)]
-        while priority_queue:
-            current_distance, current_node = heapq.heappop(priority_queue)
-            if current_distance > distances[current_node]:
-                continue
-            for neighbor, weight in self.connections[current_node].items():
-                distance = current_distance + weight
-                if distance < distances[neighbor]:
-                    distances[neighbor] = distance
-                    heapq.heappush(priority_queue, (distance, neighbor))
-        logging.info(f"Caminho mais curto calculado: {distances}")
-        return distances
+    def _find_shortest_path(self, start, target, visited=None, current_time=0):
+        if visited is None:
+            visited = []
+
+        # Se chegou ao nó de destino, retorna o tempo atual
+        if start == target:
+            return current_time
+
+        # Marca o nó atual como visitado
+        visited.append(start)
+
+        # Verifica os vizinhos e calcula os tempos de viagem
+        possible_paths = []
+        for neighbor, travel_time in self.connections[start].items():
+            if neighbor not in visited:
+                total_time = current_time + travel_time
+                path_time = self._find_shortest_path(neighbor, target, visited.copy(), total_time)
+                if path_time is not None:
+                    possible_paths.append(path_time)
+
+        # Retorna o menor tempo entre todos os caminhos possíveis
+        if possible_paths:
+            return min(possible_paths)
+        else:
+            return None
 
     def calculate_deliveries(self):
         logging.info("Iniciando o cálculo das entregas...")
@@ -54,11 +62,10 @@ class DeliveryOptimizer:
             bonus = delivery['bonus']
             logging.info(f"Processando entrega para {target} com bônus de {bonus} e tempo de início {start_time}.")
 
-            # Get shortest path from 'A' to the delivery target
-            shortest_paths = self._dijkstra('A')
-            travel_time = shortest_paths.get(target, float('infinity'))
+            # Get shortest path from 'A' to the delivery target using manual logic
+            travel_time = self._find_shortest_path('A', target)
 
-            if travel_time != float('infinity'):
+            if travel_time is not None:
                 # Calculate the total time including start time
                 arrival_time = start_time + travel_time
                 if arrival_time <= start_time + bonus:
