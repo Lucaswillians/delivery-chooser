@@ -43,16 +43,33 @@ class DeliveryOptimizerAI:
         return graph
 
     def a_star_search(self):
+        def heuristic(node, deliveries):
+            # Simple heuristic: estimate the minimal time to the closest delivery target
+            if not deliveries:
+                return 0
+            min_dist = float('inf')
+            for delivery in deliveries:
+                dist = self.get_time_between(node, delivery['target'])
+                if dist is not None and dist < min_dist:
+                    min_dist = dist
+            return min_dist if min_dist != float('inf') else 0
+
         pq = []
-        heapq.heappush(pq, (0, 0, self.start_point, []))  # (current time, total bonus, current location, delivery path)
+        heapq.heappush(pq, (0, 0, self.start_point, []))  # (cost, current bonus, current location, delivery path)
         best_solution = (0, [])  # (total bonus, delivery path)
+
+        visited = set()
 
         logging.info("Initial deliveries: %s", self.deliveries)
 
         while pq:
-            current_time, current_bonus, current_location, path = heapq.heappop(pq)
-            logging.info("Exploring: current_time=%d, current_bonus=%d, current_location=%s, path=%s",
-                         current_time, current_bonus, current_location, path)
+            current_cost, current_bonus, current_location, path = heapq.heappop(pq)
+            logging.info("Exploring: current_cost=%d, current_bonus=%d, current_location=%s, path=%s",
+                         current_cost, current_bonus, current_location, path)
+
+            if (tuple(path), current_location) in visited:
+                continue
+            visited.add((tuple(path), current_location))
 
             if current_bonus > best_solution[0]:
                 best_solution = (current_bonus, path)
@@ -61,24 +78,23 @@ class DeliveryOptimizerAI:
                 if delivery['target'] not in path:
                     time_to_target = self.get_time_between(current_location, delivery['target'])
                     if time_to_target is not None:
-                        new_time = max(current_time + time_to_target, delivery['start_time'])
+                        new_time = max(current_cost + time_to_target, delivery['start_time'])
                         logging.info("Considering delivery to %s: new_time=%d, delivery_start_time=%d",
                                      delivery['target'], new_time, delivery['start_time'])
 
                         new_path = path + [delivery['target']]
                         new_bonus = current_bonus + delivery['bonus']
 
-                        return_time = self.get_time_between(delivery['target'], self.start_point)
-                        if return_time is not None:
-                            new_time += return_time
-                            heapq.heappush(pq, (new_time, new_bonus, self.start_point, new_path))
-                            logging.info("Pushing to queue: new_time=%d, new_bonus=%d, path=%s",
-                                         new_time, new_bonus, new_path)
+                        heuristic_cost = heuristic(delivery['target'], self.deliveries)
+                        estimated_cost = new_time + heuristic_cost
+                        
+                        heapq.heappush(pq, (estimated_cost, new_bonus, delivery['target'], new_path))
+                        logging.info("Pushing to queue: estimated_cost=%d, new_bonus=%d, path=%s",
+                                     estimated_cost, new_bonus, new_path)
 
         logging.info("Best delivery sequence: %s", best_solution[1])
         logging.info("Total profit: %d", best_solution[0])
         logging.info("Best solution found: %s", best_solution)
-
         return best_solution
 
     def get_time_between(self, src, dest):

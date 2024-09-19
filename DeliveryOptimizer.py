@@ -69,4 +69,4 @@ class DeliveryOptimizer:
             else:
                 logging.info(f"Nenhum caminho válido para {target}")
 
-        logging.info(f"Bônus total ganho: {self.bonus_total}")
+        logging.info(f"Total profit: {self.bonus_total}")
